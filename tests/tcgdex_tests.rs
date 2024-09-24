@@ -179,3 +179,25 @@ fn get_filtered_cards() {
     assert_eq!(cards[0].id, "ex7-22");
     assert_eq!(cards[1].id, "ex12-33");
 }
+
+#[test]
+fn get_tcgdex_error_message() {
+    let tcgdex = Tcgdex::new();
+    let filter = Query::new().with_id("sih3-136").to_string();
+
+    let card_result: errors::Result<Card> = tcgdex.cards().fetch(Some(filter));
+    assert!(card_result.is_err());
+
+    let error = card_result.err().unwrap();
+    assert!(error.is_tcgdexapi());
+
+    let message = error.get_tcgdex_error().unwrap();
+    assert_eq!(message._type, "https://tcgdex.dev/errors/not-found");
+    assert_eq!(
+        message.title,
+        "The resource you are trying to reach does not exists"
+    );
+    assert_eq!(message.status, 404);
+    assert_eq!(message.endpoint, "/en/cards/sih3-136");
+    assert_eq!(message.method, "GET");
+}

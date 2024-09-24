@@ -10,8 +10,29 @@ pub type Result<T> = std::result::Result<T, Error>;
 /// Error returned by TCGDEX API in some cases of bad request.
 #[derive(Deserialize, Debug, PartialEq, Eq)]
 pub struct TcgdexError {
-    /// Error details.
-    pub message: String,
+    /// A URL that identifies the problem type.
+    #[serde(rename = "type")]
+    pub _type: String,
+
+    /// Summary of the problem.
+    pub title: String,
+
+    /// The HTTP status code.
+    pub status: u16,
+
+    /// Query that cause the problem.
+    pub endpoint: String,
+
+    /// Method used for query
+    pub method: String,
+
+    /// Lang used.
+    #[serde(default)]
+    pub lang: String,
+
+    /// Details about the problem.
+    #[serde(default)]
+    pub details: String,
 }
 
 /// The errors that may occur.
@@ -30,27 +51,27 @@ pub enum Error {
 impl Error {
     /// Returns true if the error is from reqwest
     #[must_use]
-    pub const fn is_reqwest(&self) -> bool {
+    pub fn is_reqwest(&self) -> bool {
         matches!(self, Self::Reqwest(_))
     }
 
     /// Returns true if the error is from the TCGDEX API.
     #[must_use]
-    pub const fn is_tcgdexapi(&self) -> bool {
+    pub fn is_tcgdexapi(&self) -> bool {
         matches!(self, Self::TcgdexApi(_))
     }
 
     /// Returns true if the error is from an empty response.
     #[must_use]
-    pub const fn is_empty_response(&self) -> bool {
+    pub fn is_empty_response(&self) -> bool {
         matches!(self, Self::EmptyResponse)
     }
 
     /// Returns the TCGDEX error message or None if error is not from TCGDEX.
     #[must_use]
-    pub fn get_tcgdex_message(&self) -> Option<&str> {
-        match &self {
-            Self::TcgdexApi(err) => Some(err.message.as_str()),
+    pub fn get_tcgdex_error(self) -> Option<TcgdexError> {
+        match self {
+            Self::TcgdexApi(err) => Some(err),
             _ => None,
         }
     }
@@ -86,6 +107,6 @@ where
                 Ok(obj)
             }
         }
-        Response::Error { error } => Err(Error::TcgdexApi(error)),
+        Response::Error(error) => Err(Error::TcgdexApi(error)),
     }
 }

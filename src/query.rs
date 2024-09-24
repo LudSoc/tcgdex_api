@@ -15,7 +15,7 @@ pub enum Order {
 
 impl Display for Order {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", self)
+        write!(f, "{self:?}")
     }
 }
 
@@ -33,7 +33,7 @@ impl Display for Order {
 /// # use tcgdex_api::query::{Order, Query};
 ///
 /// // to get a filtered card list
-/// let query = Query::new().with_filtering(vec!["hp=100"]).with_sorting("name", Order::ASC).to_string();
+/// let query = Query::new().with_filtering(vec!["hp=100"]).with_sorting("name", &Order::ASC).to_string();
 ///
 /// // to get a specific card with its id
 /// let query = Query::new().with_id("swsh3-136").to_string();
@@ -80,18 +80,16 @@ impl Query {
     #[must_use]
     pub fn with_pagination(mut self, page: u8, items_per_page: u16) -> Self {
         if self.id.is_empty() {
-            self.pagination = format!(
-                "pagination:page={}&pagination:itemsPerPage={}",
-                page, items_per_page
-            );
+            self.pagination =
+                format!("pagination:page={page}&pagination:itemsPerPage={items_per_page}");
         }
         self
     }
 
     #[must_use]
-    pub fn with_sorting(mut self, field: &str, order: Order) -> Self {
+    pub fn with_sorting(mut self, field: &str, order: &Order) -> Self {
         if self.id.is_empty() {
-            self.sorting = format!("sort:field={}&sort:order={}", field, order);
+            self.sorting = format!("sort:field={field}&sort:order={order}");
         }
         self
     }
@@ -101,7 +99,7 @@ impl Display for Query {
         let query: Vec<String> = [&self.id, &self.filtering, &self.pagination, &self.sorting]
             .into_iter()
             .filter(|v| !v.is_empty())
-            .map(|v| v.to_string())
+            .map(std::string::ToString::to_string)
             .collect();
         write!(f, "{}", query.join("&"))
     }
@@ -116,9 +114,9 @@ impl Default for Query {
 /// Request response can be a T data structure in case of success
 ///
 /// or can be an error structure in some cases of failure.
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(untagged)]
 pub(crate) enum Response<T> {
+    Error(TcgdexError),
     Data(T),
-    Error { error: TcgdexError },
 }

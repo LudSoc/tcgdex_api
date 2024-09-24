@@ -30,20 +30,28 @@ pub use crate::query::Query;
 /// Available langages for data.
 #[derive(Debug)]
 pub enum Lang {
+    /// English
     EN,
+
+    /// French
     FR,
+
+    /// Deutsch
     DE,
+
+    /// Italian
     IT,
+
+    /// Portuguese
     PT,
+
+    /// Spanish
     ES,
 }
 
 impl Display for Lang {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Lang::PT => write!(f, "pt-br"),
-            _ => write!(f, "{:?}", self),
-        }
+        write!(f, "{self:?}")
     }
 }
 
@@ -75,52 +83,62 @@ impl Tcgdex {
         }
     }
 
+    #[must_use]
     pub fn set_lang(mut self, lang: Lang) -> Self {
         self.lang = lang;
         self
     }
 
     /// Get an interface to types module.
+    #[must_use]
     pub fn types(&self) -> TypeApi {
         TypeApi(&self.client, self.lang.to_string().to_lowercase())
     }
 
     /// Get an interface to categories module.
+    #[must_use]
     pub fn categories(&self) -> CategoryApi {
         CategoryApi(&self.client, self.lang.to_string().to_lowercase())
     }
 
     /// Get an interface to hps module.
+    #[must_use]
     pub fn hps(&self) -> HpApi {
         HpApi(&self.client, self.lang.to_string().to_lowercase())
     }
 
     /// Get an interface to illustrators module.
+    #[must_use]
     pub fn illustrators(&self) -> IllustratorApi {
         IllustratorApi(&self.client, self.lang.to_string().to_lowercase())
     }
 
     /// Get an interface to rarities module.
+    #[must_use]
     pub fn rarities(&self) -> RarityApi {
         RarityApi(&self.client, self.lang.to_string().to_lowercase())
     }
 
     /// Get an interface to retreats module.
+    #[must_use]
     pub fn retreats(&self) -> RetreatApi {
         RetreatApi(&self.client, self.lang.to_string().to_lowercase())
     }
 
     /// Get an interface to retreats module.
+    #[must_use]
     pub fn series(&self) -> SerieApi {
         SerieApi(&self.client, self.lang.to_string().to_lowercase())
     }
 
     /// Get an interface to retreats module.
+    #[must_use]
     pub fn sets(&self) -> SetApi {
         SetApi(&self.client, self.lang.to_string().to_lowercase())
     }
 
     /// Get an interface to retreats module.
+    #[must_use]
     pub fn cards(&self) -> CardApi {
         CardApi(&self.client, self.lang.to_string().to_lowercase())
     }

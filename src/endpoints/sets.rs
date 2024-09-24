@@ -149,14 +149,12 @@ impl SetApi<'_> {
 
         // if query is used to filtering, sorting or pagination.
         if url_query.contains('&') || url_query.contains('=') {
-            separator = String::from('?')
+            separator = String::from('?');
         }
 
         let url = format!("{URL_BASE}{}/{OBJECT_NAME}{}{url_query}", self.1, separator);
-        println!("{url}");
 
         let response: Response<T> = client.get(url).send()?.json()?;
-
         errors::set_error(response)
     }
 }
