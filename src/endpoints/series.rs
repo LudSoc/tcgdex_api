@@ -3,7 +3,7 @@ use crate::errors;
 use crate::is_empty::IsEmpty;
 use serde::Deserialize;
 
-use crate::query::{Response, URL_BASE};
+use crate::query::{Query, Response, URL_BASE};
 
 const OBJECT_NAME: &str = "series";
 
@@ -68,7 +68,7 @@ impl SerieApi<'_> {
     /// # Errors
     ///
     /// If TCGDEX API is updated with URL or JSON format modifications.
-    pub fn fetch<T>(&self, query: Option<String>) -> errors::Result<T>
+    pub fn fetch<T>(&self, query: Option<&Query>) -> errors::Result<T>
     where
         T: for<'a> Deserialize<'a> + IsEmpty,
     {
@@ -78,7 +78,7 @@ impl SerieApi<'_> {
 
         // if query is used.
         if let Some(f) = query {
-            url_query = f;
+            url_query = f.to_string();
         }
 
         // if query is used to filtering, sorting or pagination.

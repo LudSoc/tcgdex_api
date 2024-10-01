@@ -77,10 +77,10 @@ fn get_all_series() {
 #[test]
 fn get_specific_serie() {
     let tcgdex = Tcgdex::new();
-    let filter = Query::new().with_id("swsh").to_string();
+    let filter = Query::new().with_id("swsh");
     let serie: Serie = tcgdex
         .series()
-        .fetch(Some(filter))
+        .fetch(Some(&filter))
         .expect("The API should returns a serie");
     assert_eq!(serie.id, "swsh");
     assert_eq!(serie.name, "Sword & Shield")
@@ -89,12 +89,10 @@ fn get_specific_serie() {
 #[test]
 fn get_filtered_series() {
     let tcgdex = Tcgdex::new();
-    let filter = Query::new()
-        .with_filtering(vec!["name=Sword & Shield"])
-        .to_string();
+    let filter = Query::new().with_filtering(vec!["name=Sword & Shield"]);
     let series: Vec<SerieBrief> = tcgdex
         .series()
-        .fetch(Some(filter))
+        .fetch(Some(&filter))
         .expect("The API should returns a series list");
     assert_eq!(series.len(), 1)
 }
@@ -112,10 +110,10 @@ fn get_all_sets() {
 #[test]
 fn get_specific_set() {
     let tcgdex = Tcgdex::new();
-    let filter = Query::new().with_id("swsh3").to_string();
+    let filter = Query::new().with_id("swsh3");
     let set: Set = tcgdex
         .sets()
-        .fetch(Some(filter))
+        .fetch(Some(&filter))
         .expect("The API should returns a set");
     assert_eq!(set.id, "swsh3");
     assert_eq!(set.release_date, "2020-08-14");
@@ -128,12 +126,10 @@ fn get_specific_set() {
 #[test]
 fn get_filtered_sets() {
     let tcgdex = Tcgdex::new();
-    let filter = Query::new()
-        .with_filtering(vec!["cardCount.total=201"])
-        .to_string();
+    let filter = Query::new().with_filtering(vec!["cardCount.total=201"]);
     let sets: Vec<SetBrief> = tcgdex
         .sets()
-        .fetch(Some(filter))
+        .fetch(Some(&filter))
         .expect("The API should returns a sets list");
     assert!(!sets.is_empty())
 }
@@ -151,10 +147,10 @@ fn get_all_cards() {
 #[test]
 fn get_specific_card() {
     let tcgdex = Tcgdex::new();
-    let filter = Query::new().with_id("swsh3-136").to_string();
+    let filter = Query::new().with_id("swsh3-136");
     let card: Card = tcgdex
         .cards()
-        .fetch(Some(filter))
+        .fetch(Some(&filter))
         .expect("The API should returns a card");
     assert_eq!(card.id, "swsh3-136");
     assert_eq!(card.illustrator, "tetsuya koizumi");
@@ -168,12 +164,10 @@ fn get_specific_card() {
 #[test]
 fn get_filtered_cards() {
     let tcgdex = Tcgdex::new();
-    let filter = Query::new()
-        .with_filtering(vec!["name=furret", "id=ex"])
-        .to_string();
+    let filter = Query::new().with_filtering(vec!["name=furret", "id=ex"]);
     let cards: Vec<CardBrief> = tcgdex
         .cards()
-        .fetch(Some(filter))
+        .fetch(Some(&filter))
         .expect("The API should returns a cards list");
     assert!(cards.len() >= 2);
     assert_eq!(cards[0].id, "ex7-22");
@@ -183,9 +177,9 @@ fn get_filtered_cards() {
 #[test]
 fn get_tcgdex_error_message() {
     let tcgdex = Tcgdex::new();
-    let filter = Query::new().with_id("sih3-136").to_string();
+    let filter = Query::new().with_id("sih3-136");
 
-    let card_result: errors::Result<Card> = tcgdex.cards().fetch(Some(filter));
+    let card_result = tcgdex.cards().fetch::<Card>(Some(&filter));
     assert!(card_result.is_err());
 
     let error = card_result.err().unwrap();
