@@ -77,6 +77,22 @@ impl Error {
     }
 }
 
+impl std::fmt::Display for Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Error::EmptyResponse => writeln!(f, "Response is empty"),
+            Error::Reqwest(err) => err.fmt(f),
+            Error::TcgdexApi(err) => writeln!(f, "Error type : {}", err._type),
+        }
+    }
+}
+
+impl std::error::Error for Error {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        Some(self)
+    }
+}
+
 impl From<reqwest::Error> for Error {
     /// Construct an error from a reqwest error
     fn from(err: reqwest::Error) -> Self {
