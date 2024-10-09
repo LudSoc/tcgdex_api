@@ -83,7 +83,6 @@ impl Tcgdex {
         }
     }
 
-    #[must_use]
     pub fn set_lang(&mut self, lang: Lang) {
         self.lang = lang;
     }
