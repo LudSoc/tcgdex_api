@@ -184,6 +184,10 @@ fn get_tcgdex_error_message() {
 
     let error = card_result.err().unwrap();
     assert!(error.is_tcgdexapi());
+    assert_eq!(
+        format!("{error}"),
+        "Tcgdex error : The resource you are trying to reach does not exists"
+    );
 
     let message = error.get_tcgdex_error().unwrap();
     assert_eq!(message._type, "https://tcgdex.dev/errors/not-found");

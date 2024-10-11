@@ -99,7 +99,7 @@ impl Display for Query {
         let query: Vec<String> = [&self.id, &self.filtering, &self.pagination, &self.sorting]
             .into_iter()
             .filter(|v| !v.is_empty())
-            .map(std::string::ToString::to_string)
+            .map(ToString::to_string)
             .collect();
         write!(f, "{}", query.join("&"))
     }

@@ -3,9 +3,10 @@
 use crate::is_empty::IsEmpty;
 use crate::query::Response;
 use serde::Deserialize;
+use thiserror::Error;
 
 /// A `Result` alias where the `Err` case is [`Error`].
-pub type Result<T> = std::result::Result<T, Error>;
+pub type Result<T> = std::result::Result<T, ApiError>;
 
 /// Error returned by TCGDEX API in some cases of bad request.
 #[derive(Deserialize, Debug, PartialEq, Eq)]
@@ -36,19 +37,22 @@ pub struct TcgdexError {
 }
 
 /// The errors that may occur.
-#[derive(Debug)]
-pub enum Error {
+#[derive(Debug, Error)]
+pub enum ApiError {
     /// Error from reqwest
-    Reqwest(reqwest::Error),
+    #[error("Reqwest error : {}", .0)]
+    Reqwest(#[from] reqwest::Error),
 
     /// Error from TCGDEX API.
+    #[error("Tcgdex error : {}", .0.title)]
     TcgdexApi(TcgdexError),
 
     /// Response is empty.
+    #[error("Response is empty")]
     EmptyResponse,
 }
 
-impl Error {
+impl ApiError {
     /// Returns true if the error is from reqwest
     #[must_use]
     pub fn is_reqwest(&self) -> bool {
@@ -77,31 +81,8 @@ impl Error {
     }
 }
 
-impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Error::EmptyResponse => writeln!(f, "Response is empty"),
-            Error::Reqwest(err) => err.fmt(f),
-            Error::TcgdexApi(err) => writeln!(f, "Error type : {}", err._type),
-        }
-    }
-}
-
-impl std::error::Error for Error {
-    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
-        Some(self)
-    }
-}
-
-impl From<reqwest::Error> for Error {
-    /// Construct an error from a reqwest error
-    fn from(err: reqwest::Error) -> Self {
-        Self::Reqwest(err)
-    }
-}
-
 // NOTE: reqwest error cannot be compared.
-impl PartialEq for Error {
+impl PartialEq for ApiError {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
             (Self::TcgdexApi(a), Self::TcgdexApi(b)) => a == b,
@@ -118,11 +99,11 @@ where
     match response {
         Response::Data(obj) => {
             if obj.is_empty() {
-                Err(Error::EmptyResponse)
+                Err(ApiError::EmptyResponse)
             } else {
                 Ok(obj)
             }
         }
-        Response::Error(error) => Err(Error::TcgdexApi(error)),
+        Response::Error(error) => Err(ApiError::TcgdexApi(error)),
     }
 }
