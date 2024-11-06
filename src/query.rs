@@ -37,7 +37,7 @@ impl Display for Order {
 /// # use tcgdex_api::query::{Order, Query};
 ///
 /// // to get a filtered card list
-/// let query = Query::new().with_filtering(vec!["hp=100"]).with_sorting("name", &Order::ASC).to_string();
+/// let query = Query::new().with_filtering(vec!["hp=100"]).with_sorting("name", &Order::ASC);
 ///
 /// // to get a specific card with its id
 /// let query = Query::new().with_id("swsh3-136").to_string();
@@ -75,7 +75,7 @@ impl Query {
 
     /// Set filter to use. More details about filtering [here](https://tcgdex.dev/rest/filtering-sorting-pagination).
     ///
-    /// # Arguments
+    /// # Argument
     ///
     /// `filter` - a vector to set all filters needed.
     ///

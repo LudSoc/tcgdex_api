@@ -27,7 +27,7 @@ impl TypeApi<'_> {
     pub fn fetch(&self) -> reqwest::Result<Vec<String>> {
         let client: &reqwest::blocking::Client = self.0;
         let types: Vec<String> = client
-            .get(format!("{URL_BASE}{}/{OBJECT_NAME}", self.1))
+            .get(format!("{}{}/{OBJECT_NAME}", URL_BASE, self.1))
             .send()?
             .json()?;
         Ok(types)

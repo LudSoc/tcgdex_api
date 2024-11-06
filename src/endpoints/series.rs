@@ -97,7 +97,10 @@ impl SerieApi<'_> {
             separator = String::from('?');
         }
 
-        let url = format!("{URL_BASE}{}/{OBJECT_NAME}{}{url_query}", self.1, separator);
+        let url = format!(
+            "{}{}/{OBJECT_NAME}{}{url_query}",
+            URL_BASE, self.1, separator
+        );
 
         let response: Response<T> = client.get(url).send()?.json()?;
         errors::set_error(response)

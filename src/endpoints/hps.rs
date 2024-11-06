@@ -25,7 +25,7 @@ impl HpApi<'_> {
     pub fn fetch(&self) -> reqwest::Result<Vec<u16>> {
         let client: &reqwest::blocking::Client = self.0;
         let hps: Vec<u16> = client
-            .get(format!("{URL_BASE}{}/{OBJECT_NAME}", self.1))
+            .get(format!("{}{}/{OBJECT_NAME}", URL_BASE, self.1))
             .send()?
             .json()?;
         Ok(hps)
