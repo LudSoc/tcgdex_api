@@ -5,6 +5,7 @@ use crate::query::URL_BASE;
 const OBJECT_NAME: &str = "retreats";
 
 /// Gives access to module functions.
+#[derive(Debug)]
 pub struct RetreatApi<'a>(pub(crate) &'a reqwest::blocking::Client, pub(crate) String);
 
 impl RetreatApi<'_> {

@@ -7,9 +7,13 @@ use std::fmt::{Display, Formatter};
 /// Constant part of the URL for queries.
 pub(crate) const URL_BASE: &str = "https://api.tcgdex.net/v2/";
 
-#[derive(Debug)]
+/// Used to set sorting order.
+#[derive(Debug, Copy, Clone)]
 pub enum Order {
+    /// Ascending sorting.
     ASC,
+
+    /// Descending sorting.
     DESC,
 }
 
@@ -29,7 +33,7 @@ impl Display for Order {
 ///
 /// # Example
 ///
-/// ```
+/// ```rust
 /// # use tcgdex_api::query::{Order, Query};
 ///
 /// // to get a filtered card list
@@ -39,6 +43,7 @@ impl Display for Order {
 /// let query = Query::new().with_id("swsh3-136").to_string();
 /// ```
 
+#[derive(Debug)]
 pub struct Query {
     id: String,
     filtering: String,
@@ -47,6 +52,8 @@ pub struct Query {
 }
 
 impl Query {
+    /// Create a query with all field empty.
+    /// Used methods to set needed data.
     #[must_use]
     pub const fn new() -> Self {
         Self {
@@ -57,6 +64,7 @@ impl Query {
         }
     }
 
+    /// Set id to get (for cards and sets).
     #[must_use]
     pub fn with_id(mut self, id: &str) -> Self {
         if self.filtering.is_empty() && self.sorting.is_empty() && self.pagination.is_empty() {
@@ -65,6 +73,20 @@ impl Query {
         self
     }
 
+    /// Set filter to use. More details about filtering [here](https://tcgdex.dev/rest/filtering-sorting-pagination).
+    ///
+    /// # Arguments
+    ///
+    /// `filter` - a vector to set all filters needed.
+    ///
+    /// # Example
+    ///
+    ///```rust
+    /// # use tcgdex_api::query::Query;
+    ///
+    /// // to get a filtered card list with only pikachu cards with 100 hp
+    /// let query = Query::new().with_filtering(vec!["hp=100", "name=pikachu"]);
+    /// ```
     #[must_use]
     pub fn with_filtering(mut self, filter: Vec<&str>) -> Self {
         if self.id.is_empty() {
@@ -77,6 +99,21 @@ impl Query {
         self
     }
 
+    /// Set pagination to use. More details about pagination [here](https://tcgdex.dev/rest/filtering-sorting-pagination).
+    ///
+    /// # Arguments
+    ///
+    /// `page` - Output page to read.
+    /// `items_per_page` - Number of items to return in page.
+    ///
+    /// # Example
+    ///
+    ///```rust
+    /// # use tcgdex_api::query::Query;
+    ///
+    /// // to get the top 5 items of third page
+    /// let query = Query::new().with_pagination(3, 5);
+    /// ```
     #[must_use]
     pub fn with_pagination(mut self, page: u8, items_per_page: u16) -> Self {
         if self.id.is_empty() {
@@ -86,6 +123,21 @@ impl Query {
         self
     }
 
+    /// Set sorting to use. More details about sorting [here](https://tcgdex.dev/rest/filtering-sorting-pagination).
+    ///
+    /// # Arguments
+    ///
+    /// `field` - Field used to sort.
+    /// `order` - Sorting order. See [Order].
+    ///
+    /// # Example
+    ///
+    ///```rust
+    /// # use tcgdex_api::query::{Query, Order};
+    ///
+    /// // to get a card list sorted by ascending hp
+    /// let query = Query::new().with_sorting("hp", &Order::ASC);
+    /// ```
     #[must_use]
     pub fn with_sorting(mut self, field: &str, order: &Order) -> Self {
         if self.id.is_empty() {

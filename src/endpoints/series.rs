@@ -1,3 +1,7 @@
+//! Get series list using [`SerieApi`].
+//!
+//! Serie is a group of sets.
+
 use crate::endpoints::sets::SetBrief;
 use crate::errors;
 use crate::is_empty::IsEmpty;
@@ -7,6 +11,7 @@ use crate::query::{Query, Response, URL_BASE};
 
 const OBJECT_NAME: &str = "series";
 
+/// Brief information about the serie.
 #[derive(Deserialize, Debug, Default, PartialEq, Eq)]
 #[serde(default)]
 pub struct SerieBrief {
@@ -21,6 +26,7 @@ pub struct SerieBrief {
     pub logo: String,
 }
 
+/// Information about the serie.
 #[derive(Deserialize, Debug, Default, PartialEq, Eq)]
 pub struct Serie {
     /// Unique identifier for the object.
@@ -50,10 +56,15 @@ impl IsEmpty for Vec<SerieBrief> {
 }
 
 /// Gives access to module functions.
+#[derive(Debug)]
 pub struct SerieApi<'a>(pub(crate) &'a reqwest::blocking::Client, pub(crate) String);
 
 impl SerieApi<'_> {
     /// Get series.
+    ///
+    /// # Argument
+    ///
+    /// `query` - A [`Query`] used to get series. If None, returns all series.
     ///
     /// # Example
     ///

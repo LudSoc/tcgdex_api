@@ -3,6 +3,18 @@
 //! You can get information about Pokémon cards, cards sets and sets series accessible through a powerful filter.
 //! You can also get a list of all existing card types, categories, Hp, illustrators, retreat costs and rarities.
 
+#![deny(
+    missing_docs,
+    missing_debug_implementations,
+    missing_copy_implementations,
+    trivial_casts,
+    trivial_numeric_casts,
+    unsafe_code,
+    unstable_features,
+    unused_import_braces,
+    unused_qualifications
+)]
+
 pub mod endpoints;
 pub mod errors;
 mod is_empty;
@@ -28,7 +40,7 @@ pub use crate::endpoints::{
 pub use crate::query::Query;
 
 /// Available langages for data.
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub enum Lang {
     /// English
     EN,
@@ -75,6 +87,7 @@ impl Default for Tcgdex {
 }
 
 impl Tcgdex {
+    /// Create new Tcgdex with blocking client and english langage.
     #[must_use]
     pub fn new() -> Self {
         Self {
@@ -83,6 +96,7 @@ impl Tcgdex {
         }
     }
 
+    /// Set cards langage.
     pub fn set_lang(&mut self, lang: Lang) {
         self.lang = lang;
     }

@@ -7,6 +7,7 @@ use crate::query::URL_BASE;
 const OBJECT_NAME: &str = "types";
 
 /// Gives access to module functions.
+#[derive(Debug)]
 pub struct TypeApi<'a>(pub(crate) &'a reqwest::blocking::Client, pub(crate) String);
 
 impl TypeApi<'_> {

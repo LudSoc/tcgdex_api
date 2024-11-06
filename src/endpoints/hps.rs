@@ -5,6 +5,7 @@ use crate::query::URL_BASE;
 const OBJECT_NAME: &str = "hp";
 
 /// Gives access to module functions.
+#[derive(Debug)]
 pub struct HpApi<'a>(pub(crate) &'a reqwest::blocking::Client, pub(crate) String);
 
 impl HpApi<'_> {

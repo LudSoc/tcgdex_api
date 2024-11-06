@@ -7,6 +7,7 @@ use crate::query::URL_BASE;
 const OBJECT_NAME: &str = "categories";
 
 /// Gives access to module functions.
+#[derive(Debug)]
 pub struct CategoryApi<'a>(pub(crate) &'a reqwest::blocking::Client, pub(crate) String);
 
 impl CategoryApi<'_> {

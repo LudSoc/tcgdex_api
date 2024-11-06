@@ -1,6 +1,9 @@
 [package]
 name = "tcgdex_api"
 version = "0.1.0"
+authors = ["Ludovic Socié"]
+license = "MIT"
+description = "This API allows to interact with tcgdex Pokémon cards database."
 edition = "2021"
 
 [dependencies]

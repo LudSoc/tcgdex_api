@@ -1,3 +1,5 @@
+//! Get cards list using [`CardApi`].
+
 use crate::endpoints::sets::SetBrief;
 use crate::errors;
 use crate::is_empty::IsEmpty;
@@ -7,7 +9,8 @@ use crate::query::{Query, Response, URL_BASE};
 
 const OBJECT_NAME: &str = "cards";
 
-#[derive(Deserialize, Debug, Default, PartialEq, Eq)]
+/// The possible variants of this card.
+#[derive(Deserialize, Debug, Default, PartialEq, Eq, Copy, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Variants {
     /// Card available without any shines.
@@ -23,6 +26,7 @@ pub struct Variants {
     pub first_edition: bool,
 }
 
+/// Pokémon attack information.
 #[derive(Deserialize, Debug, Default, PartialEq, Eq)]
 #[serde(default)]
 pub struct Attack {
@@ -36,6 +40,7 @@ pub struct Attack {
     pub damage: u16,
 }
 
+/// The Pokémon item.
 #[derive(Deserialize, Debug, Default, PartialEq, Eq)]
 #[serde(default)]
 pub struct Item {
@@ -46,6 +51,7 @@ pub struct Item {
     pub effect: String,
 }
 
+/// Weaknesses information, only for Pokémon cards.
 #[derive(Deserialize, Debug, Default, PartialEq, Eq)]
 #[serde(default, rename_all = "camelCase")]
 pub struct Weakness {
@@ -56,6 +62,7 @@ pub struct Weakness {
     pub value: String,
 }
 
+/// Brief information about the card.
 #[derive(Deserialize, Debug, Default, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct CardBrief {
@@ -73,6 +80,7 @@ pub struct CardBrief {
     pub image: String,
 }
 
+/// Information about the card.
 #[derive(Deserialize, Debug, Default, PartialEq, Eq)]
 #[serde(default, rename_all = "camelCase")]
 pub struct Card {
@@ -165,10 +173,15 @@ impl IsEmpty for Vec<CardBrief> {
 }
 
 /// Gives access to module functions.
+#[derive(Debug)]
 pub struct CardApi<'a>(pub(crate) &'a reqwest::blocking::Client, pub(crate) String);
 
 impl CardApi<'_> {
     /// Get cards.
+    ///
+    /// # Argument
+    ///
+    /// `query` - A [`Query`] used to get cards. If None, returns all cards.
     ///
     /// # Example
     ///
