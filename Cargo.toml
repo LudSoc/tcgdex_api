@@ -5,6 +5,7 @@ authors = ["Ludovic Socié"]
 license = "MIT"
 description = "This API allows to interact with tcgdex Pokémon cards database."
 edition = "2021"
+repository = "https://github.com/LudSoc/tcgdex_api"
 
 [dependencies]
 serde_json = "1.0.116"
