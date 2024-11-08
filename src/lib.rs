@@ -96,7 +96,7 @@ impl Tcgdex {
         }
     }
 
-    /// Set cards langage.
+    /// Set cards language.
     pub fn set_lang(&mut self, lang: Lang) {
         self.lang = lang;
     }
