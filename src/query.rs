@@ -90,11 +90,7 @@ impl Query {
     #[must_use]
     pub fn with_filtering(mut self, filter: Vec<&str>) -> Self {
         if self.id.is_empty() {
-            let mut fixed_filter: Vec<&str> = Vec::new();
-            for item in filter {
-                fixed_filter.push(item.split_whitespace().collect::<Vec<&str>>()[0]);
-            }
-            self.filtering = fixed_filter.join("&");
+            self.filtering = filter.join("&");
         }
         self
     }
