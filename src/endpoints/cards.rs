@@ -3,7 +3,7 @@
 use crate::endpoints::sets::SetBrief;
 use crate::errors;
 use crate::is_empty::IsEmpty;
-use serde::Deserialize;
+use serde::{Deserialize, Deserializer};
 
 use crate::query::{Query, Response, URL_BASE};
 
@@ -37,7 +37,26 @@ pub struct Attack {
     pub effect: String,
 
     /// The damages of the attack.
-    pub damage: u16,
+    #[serde(deserialize_with = "damage_from_string_or_number")]
+    pub damage: String,
+}
+
+fn damage_from_string_or_number<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum Damage {
+        Int(u16),
+        Str(String),
+    }
+
+    let d = Damage::deserialize(deserializer)?;
+    Ok(match d {
+        Damage::Int(n) => n.to_string(),
+        Damage::Str(s) => s,
+    })
 }
 
 /// The Pokémon item.
